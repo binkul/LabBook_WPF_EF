@@ -5,6 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LabBook_WPF_EF.Forms.Materials"
         xmlns:vm="clr-namespace:LabBook_WPF_EF.Forms.Materials.ModelView"
+        xmlns:naviMV="clr-namespace:LabBook_WPF_EF.Navigation"
+        xmlns:converters="clr-namespace:LabBook_WPF_EF.Converters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MaterialMV, IsDesignTimeCreatable=false}"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -13,17 +15,174 @@
         Icon="/img/Atom.png"
         ResizeMode="CanResize"
         Title="Surowce" 
-        Height="450" 
-        Width="800"
-        >
+        Height="{Binding FormHeight, Mode=TwoWay}" 
+        Width="{Binding FormWidth, Mode=TwoWay}"
+        Left="{Binding FormLeft, Mode=TwoWay}"
+        Top="{Binding FormTop, Mode=TwoWay}">
     <i:Interaction.Triggers>
         <!-- Closing Form event -->
         <i:EventTrigger EventName="Closing">
             <cmd:EventToCommand Command="{Binding OnClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
+    <Window.Resources>
+        <naviMV:NavigationMV x:Key="navi" />
+        <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
 
-    <Grid>
+    </Window.Resources>
+
+    <DockPanel Margin="0,0,0,0" >
+        <!-- Menu Ribbon -->
+        <Ribbon DockPanel.Dock="Top" FontWeight="Bold" FontSize="14" >
+            <RibbonTab Header="Plik" >
+                <RibbonGroup Header="Operacje"  FontSize="10">
+                    <StackPanel Orientation="Vertical" Margin="5,2,5,0" >
+                        <Button Width="48" Height="48" Command="{Binding SaveButton}">
+                            <Image Source="/img/Save.png" />
+                            <Button.ToolTip >
+                                <ToolTip Background="Yellow">
+                                    <DockPanel Width="Auto" Height="Auto" Background="Yellow" >
+                                        <TextBlock FontSize="12">Zapisz zmiany</TextBlock>
+                                    </DockPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+                        <Label Content="Zapisz" Padding="0,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                    <StackPanel Orientation="Vertical" Margin="5,2,5,0" >
+                        <Button Width="48" Height="48" Command="{Binding DeleteButton}">
+                            <Image Source="/img/Delete.png" />
+                            <Button.ToolTip >
+                                <ToolTip Background="Yellow">
+                                    <DockPanel Width="Auto" Height="Auto" Background="Yellow" >
+                                        <TextBlock FontSize="12">Usuń materiał</TextBlock>
+                                    </DockPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+                        <Label Content="Usuń" Padding="0,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                </RibbonGroup>
+                <RibbonGroup Header="Dodawanie"  FontSize="10">
+                    <StackPanel Orientation="Vertical" Margin="5,2,5,0" >
+                        <Button Width="48" Height="48" Command="{Binding AddNewButton}">
+                            <Image Source="/img/AddNew.png" />
+                            <Button.ToolTip >
+                                <ToolTip Background="Yellow">
+                                    <DockPanel Width="Auto" Height="Auto" Background="Yellow" >
+                                        <TextBlock FontSize="12">Dodaj nowy</TextBlock>
+                                    </DockPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+                        <Label Content="Nowy" Padding="0,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                </RibbonGroup>
+            </RibbonTab>
+            <RibbonTab Header="Clp" IsEnabled="{Binding IsDanger, Mode=OneWay}">
+                <RibbonGroup Header="Zmiany Clp"  FontSize="10">
+                    <StackPanel Orientation="Vertical" Margin="5,2,5,0" >
+                        <Button Width="48" Height="48" Command="{Binding ClpButton}">
+                            <Image Source="/img/Biohazard.png" />
+                            <Button.ToolTip >
+                                <ToolTip Background="Yellow">
+                                    <DockPanel Width="Auto" Height="Auto" Background="Yellow" >
+                                        <TextBlock FontSize="12">Otwórz CLP</TextBlock>
+                                    </DockPanel>
+                                </ToolTip>
+                            </Button.ToolTip>
+                        </Button>
+                        <Label Content="Nowy" Padding="0,2,0,0" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="12" FontWeight="Bold" />
+                    </StackPanel>
+                </RibbonGroup>
+            </RibbonTab>
+        </Ribbon>
+
+        <!-- Main grid -->
+        <Grid Background="#FFE5E5E5">
+            <Grid.ColumnDefinitions >
+                <ColumnDefinition Width="65" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions >
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="25" />
+            </Grid.RowDefinitions>
+            
+            <!-- Material name and date -->
+            <Label Grid.Column="0" Grid.Row="0" Content="Nazwa" FontWeight="Bold" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Right"  />
+            <TextBox Grid.Column="1" Grid.Row="0" x:Name="TxtName" VerticalAlignment="Center" FontWeight="Bold" KeyUp="TxtBox_KeyUp" 
+                     FontSize="14" Margin="5,0,5,0" Padding="2,2,0,0" Height="28"
+                     Text="Na razie jakiś tekst" />
+            <!--Text="{Binding SelectedItem.name, ElementName=DgMaterials, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 IsEnabled="{Binding IsPermited, Mode=OneWay}" />-->
+            <Label Grid.Column="2" Grid.Row="0" Name="LblDate" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"
+                   Foreground="Red" 
+                   Content="06.07.2022"/>
+            <!--Content="{Binding SelectedItem.date_update, ElementName=DgMaterials, Mode=OneWay, Converter={StaticResource DateTimeConverter}}"-->
+
+            <!-- Tabs -->
+            <TabControl Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" SelectedIndex="0" Background="#FFE5E5E5" >
+                
+                <!-- Main DataGrid -->
+                <TabItem Header="Strona główna" >
+                    
+                </TabItem>
+                
+                <!-- Data and remarks -->
+                <TabItem Header="Dane i uwagi" >
+                    
+                </TabItem>
+                
+                <!-- CLP -->
+                <TabItem Header="CLP" >
+                    
+                </TabItem>
+                
+                <!-- Material composition -->
+                <TabItem Header="Skład surowca" >
+                    
+                </TabItem>
+            </TabControl>
+
+            <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Orientation="Horizontal" >
+                <Button  x:Name="BtnNaviLeftFirst" Height="20" Width="20" Tag="first" Margin="5,0,0,0" 
+                         Command="{Binding MoveFirst, Source={StaticResource navi}}">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="/img/Arrow-left_first.png" Stretch="Fill" Height="13"/>
+                    </StackPanel>
+                </Button>
+                
+                <Button x:Name="BtnNaviLeft" Height="20" Width="20" Tag="left" Margin="1,0,0,0"
+                        Command="{Binding MoveLeft, Source={StaticResource navi}}">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="/img/Arrow-left.png" Stretch="Fill" Height="13"/>
+                    </StackPanel>
+                </Button>
+
+                <TextBox x:Name="TxtNavieRec" Width="55" HorizontalAlignment="Left" Padding="0,2,0,0" FontSize="11" Height="20"
+                     FontWeight="SemiBold" IsReadOnly="True" Margin="1,0,0,0" 
+                         Text="{Binding DgRowIndex, Source={StaticResource navi}, Mode=OneWay, Converter={StaticResource NaviCurrentConverter}}"/>
+
+                <Button x:Name="BtnNaviRight" HorizontalAlignment="Left" Height="20" Width="20" Tag="right" Margin="1,0,0,0"
+                        Command="{Binding MoveRight, Source={StaticResource navi}}">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="/img/Arrow-right.png" Stretch="Fill" Height="13"/>
+                    </StackPanel>
+                </Button>
+
+                <Button x:Name="BtnNaviRightLast" HorizontalAlignment="Left" Height="20" Width="20" Tag="last" Margin="1,0,0,0"
+                        Command="{Binding MoveLast, Source={StaticResource navi}}">
+                    <StackPanel Orientation="Horizontal" >
+                        <Image Source="/img/Arrow-right_last.png" Stretch="Fill" Height="13"/>
+                    </StackPanel>
+                </Button>
+
+            </StackPanel>
+        </Grid>
+
         
-    </Grid>
+    </DockPanel>
 </RibbonWindow>

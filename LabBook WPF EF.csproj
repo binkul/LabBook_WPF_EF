@@ -265,8 +265,13 @@
     <Compile Include="Commons\IPosition.cs" />
     <Compile Include="Commons\WindowFunction.cs" />
     <Compile Include="Commons\WindowParameter.cs" />
+    <Compile Include="Converters\NaviCurrentConverter.cs" />
     <Compile Include="EntityModels\LabBookContext.cs" />
     <Compile Include="EntityModels\User.cs" />
+    <Compile Include="Forms\Materials\Command\AddNewButton.cs" />
+    <Compile Include="Forms\Materials\Command\ClpButton.cs" />
+    <Compile Include="Forms\Materials\Command\DeleteButton.cs" />
+    <Compile Include="Forms\Materials\Command\SaveButton.cs" />
     <Compile Include="Forms\Materials\MaterialForm.xaml.cs">
       <DependentUpon>MaterialForm.xaml</DependentUpon>
     </Compile>
@@ -274,6 +279,12 @@
     <Compile Include="Forms\Register\RegisterForm.xaml.cs">
       <DependentUpon>RegisterForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Navigation\INavigation.cs" />
+    <Compile Include="Navigation\NaviButtonFirst.cs" />
+    <Compile Include="Navigation\NaviButtonLast.cs" />
+    <Compile Include="Navigation\NaviButtonLeft.cs" />
+    <Compile Include="Navigation\NaviButtonRight.cs" />
+    <Compile Include="Navigation\NavigationMV.cs" />
     <Compile Include="Security\Encrypt.cs" />
     <Page Include="Forms\Login\LoginForm.xaml">
       <SubType>Designer</SubType>
@@ -332,6 +343,24 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Img\Atom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Img\Save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Img\Delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Img\AddNew.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Img\Biohazard.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Img\Arrow-left.png" />
+    <Resource Include="Img\Arrow-left_first.png" />
+    <Resource Include="Img\Arrow-right.png" />
+    <Resource Include="Img\Arrow-right_last.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="packages\Microsoft.Data.SqlClient.SNI.5.0.0\build\net46\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('packages\Microsoft.Data.SqlClient.SNI.5.0.0\build\net46\Microsoft.Data.SqlClient.SNI.targets')" />

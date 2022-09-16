@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,37 @@ namespace LabBook_WPF_EF.Commons
     {
         public WindowParameter LoadWindowParamaters(string file)
         {
-            throw new NotImplementedException();
+            WindowParameter windowParameter = new WindowParameter();
+
+            string path = Directory.GetCurrentDirectory() + file;
+            if (!File.Exists(path))
+                return windowParameter;
+
+
+            try
+            {
+                XDocument xml = XDocument.Load(path);
+
+                XElement position = xml.Root.Element("window").Element("position");
+                windowParameter.Left = double.Parse(position.Element("x").Value, CultureInfo.InvariantCulture);
+                windowParameter.Top = double.Parse(position.Element("y").Value, CultureInfo.InvariantCulture);
+
+                XElement size = xml.Root.Element("window").Element("size");
+                windowParameter.Width = double.Parse(size.Element("width").Value, CultureInfo.InvariantCulture);
+                windowParameter.Height = double.Parse(size.Element("height").Value, CultureInfo.InvariantCulture);
+
+                XElement datagrid = xml.Root.Element("window").Element("datagrid");
+                if (datagrid != null)
+                {
+                    IEnumerable<IDictionary<string, string>> data = (IEnumerable<IDictionary<string, string>>)datagrid.Elements();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Błąd przy zapisywaniu do pliku '" + file + "'\n" + ex.Message, "Błąd zapisu", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            return windowParameter;
         }
 
         public bool SaveWindowParameters(WindowParameter parameter, string file)

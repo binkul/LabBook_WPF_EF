@@ -1,4 +1,5 @@
 ﻿using LabBook_WPF_EF.EntityModels;
+using LabBook_WPF_EF.Forms.Materials;
 using LabBook_WPF_EF.Forms.Register;
 using LabBook_WPF_EF.Security;
 using System;
@@ -51,8 +52,8 @@ namespace LabBook_WPF_EF.Forms.Login
             {
                 user.Password = "";
                 Mouse.OverrideCursor = Cursors.Wait;
-                //QualityForm quality = new QualityForm(user);
-                //quality.Show();
+                MaterialForm quality = new MaterialForm(contex, user);
+                quality.Show();
                 Close();
                 Mouse.OverrideCursor = null;
             }

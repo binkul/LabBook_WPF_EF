@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LabBook_WPF_EF.EntityModels;
+using LabBook_WPF_EF.Forms.Materials.ModelView;
+using LabBook_WPF_EF.Navigation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +23,35 @@ namespace LabBook_WPF_EF.Forms.Materials
     /// </summary>
     public partial class MaterialForm : RibbonWindow
     {
-        public MaterialForm()
+        public MaterialForm(LabBookContext context, User user)
         {
             InitializeComponent();
+
+            MaterialMV materialMV = new MaterialMV(context, user);
+            DataContext = materialMV;
+            NavigationMV navigationMV = Resources["navi"] as NavigationMV;
+
+            navigationMV.ModelView = materialMV;
+            materialMV.SetNavigationMV = navigationMV;
         }
+
+        private void TxtBox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox tBox = (TextBox)sender;
+                DependencyProperty prop = TextBox.TextProperty;
+
+                BindingExpression binding = BindingOperations.GetBindingExpression(tBox, prop);
+                if (binding != null) { binding.UpdateSource(); }
+
+                TraversalRequest tRequest = new TraversalRequest(FocusNavigationDirection.Next);
+                if (Keyboard.FocusedElement is UIElement keyboardFocus)
+                {
+                    keyboardFocus.MoveFocus(tRequest);
+                }
+            }
+        }
+
     }
 }

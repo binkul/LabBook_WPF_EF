@@ -266,7 +266,16 @@
     <Compile Include="Commons\WindowFunction.cs" />
     <Compile Include="Commons\WindowParameter.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
+    <Compile Include="EntityModels\ClpGHS.cs" />
+    <Compile Include="EntityModels\ClpPhraseHP.cs" />
+    <Compile Include="EntityModels\ClpSignalWord.cs" />
+    <Compile Include="EntityModels\Currency.cs" />
     <Compile Include="EntityModels\LabBookContext.cs" />
+    <Compile Include="EntityModels\Material.cs" />
+    <Compile Include="EntityModels\MaterialFunction.cs" />
+    <Compile Include="EntityModels\MaterialJoinGHS.cs" />
+    <Compile Include="EntityModels\MaterialJoinHP.cs" />
+    <Compile Include="EntityModels\Unit.cs" />
     <Compile Include="EntityModels\User.cs" />
     <Compile Include="Forms\Materials\Command\AddNewButton.cs" />
     <Compile Include="Forms\Materials\Command\ClpButton.cs" />

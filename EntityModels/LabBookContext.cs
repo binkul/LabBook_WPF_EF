@@ -151,7 +151,7 @@ namespace LabBook_WPF_EF.EntityModels
 
             modelBuilder.Entity<ClpPhraseHP>(entity =>
             {
-                entity.ToTable("CmbClpPictogram");
+                entity.ToTable("CmbClpHP");
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.DangerClass)
@@ -202,9 +202,16 @@ namespace LabBook_WPF_EF.EntityModels
 
             modelBuilder.Entity<MaterialJoinGHS>(entity =>
             {
-                entity.ToTable("CmbClpPictogram");
+                entity.ToTable("MaterialGHS");
+                entity.Property(e => e.Id).HasColumnName("id");
+
                 entity.Property(e => e.MaterialId).HasColumnName("material_id");
                 entity.Property(e => e.GhsId).HasColumnName("ghs_id");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnName("date_created")
+                    .HasColumnType("date")
+                    .HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Material)
                     .WithMany(p => p.MaterialGhsList)
@@ -220,6 +227,8 @@ namespace LabBook_WPF_EF.EntityModels
             modelBuilder.Entity<MaterialJoinHP>(entity =>
             {
                 entity.ToTable("MaterialCLP");
+                entity.Property(e => e.Id).HasColumnName("id");
+
                 entity.Property(e => e.MaterialId).HasColumnName("material_id");
                 entity.Property(e => e.HpId).HasColumnName("clp_id");
 

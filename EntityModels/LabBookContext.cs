@@ -214,7 +214,7 @@ namespace LabBook_WPF_EF.EntityModels
                     .HasDefaultValueSql("(getdate())");
 
                 entity.HasOne(d => d.Material)
-                    .WithMany(p => p.MaterialGhsList)
+                    .WithMany(p => p.MaterialJoinGhsList)
                     .HasForeignKey(d => d.MaterialId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
 

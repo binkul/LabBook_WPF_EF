@@ -3,6 +3,7 @@ using LabBook_WPF_EF.Commons;
 using LabBook_WPF_EF.EntityModels;
 using LabBook_WPF_EF.Forms.Materials.Command;
 using LabBook_WPF_EF.Navigation;
+using LabBook_WPF_EF.Service;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,8 +28,9 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private int _selectedIndex;
         private readonly User _user;
         private readonly LabBookContext _context;
+        private readonly MaterialService _service;
         private readonly WindowFunction _windowFunction;
-        private readonly WindowParameter _windowParameter;
+        private WindowParameter _windowParameter;
         public RelayCommand<CancelEventArgs> OnClosingCommand { get; set; }
 
 
@@ -36,11 +38,12 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         {
             _user = user;
             _context = context;
+            _service = new MaterialService(user, context);
             _windowFunction = new WindowFunction();
-            _windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
-            OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
-
+            //_windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
             OnClosingCommand = new RelayCommand<CancelEventArgs>(OnClosingCommandExecuted);
+
+            //OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
         }
 
 
@@ -61,9 +64,10 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public double FormLeft
         {
-            get => _windowParameter.Left;
+            get => _windowParameter != null ? _windowParameter.Left : 20;
             set
             {
+                if (_windowParameter == null) return;
                 _windowParameter.Left = value;
                 OnPropertyChanged(nameof(FormLeft));
             }
@@ -71,9 +75,10 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public double FormTop
         {
-            get => _windowParameter.Top;
+            get => _windowParameter != null ? _windowParameter.Top : 20;
             set
             {
+                if (_windowParameter == null) return;
                 _windowParameter.Top = value;
                 OnPropertyChanged(nameof(FormTop));
             }
@@ -81,9 +86,10 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public double FormWidth
         {
-            get => _windowParameter.Width;
+            get => _windowParameter != null ? _windowParameter.Width : 100;
             set
             {
+                if (_windowParameter == null) return;
                 _windowParameter.Width = value;
                 OnPropertyChanged(nameof(FormWidth));
             }
@@ -91,9 +97,10 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public double FormHeight
         {
-            get => _windowParameter.Height;
+            get => _windowParameter != null ? _windowParameter.Height : 100;
             set
             {
+                if (_windowParameter == null) return;
                 _windowParameter.Height = value;
                 OnPropertyChanged(nameof(FormHeight));
             }
@@ -103,6 +110,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public bool IsDanger => true;
 
+        public SortableObservableCollection<Material> Materials => _service.Materials; //ok
 
         public void OnClosingCommandExecuted(CancelEventArgs e)
         {
@@ -127,6 +135,14 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
                 _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
             }
         }
+
+        public void PrepareForm()
+        {
+            _windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
+            OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
+            _service.PrepareData();
+        }
+
 
         #region Navigation
 

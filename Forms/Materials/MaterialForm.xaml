@@ -18,7 +18,7 @@
         Height="{Binding FormHeight, Mode=TwoWay}" 
         Width="{Binding FormWidth, Mode=TwoWay}"
         Left="{Binding FormLeft, Mode=TwoWay}"
-        Top="{Binding FormTop, Mode=TwoWay}">
+        Top="{Binding FormTop, Mode=TwoWay}" Loaded="RibbonWindow_Loaded" >
     <i:Interaction.Triggers>
         <!-- Closing Form event -->
         <i:EventTrigger EventName="Closing">

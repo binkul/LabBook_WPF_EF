@@ -263,6 +263,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commons\IPosition.cs" />
+    <Compile Include="Commons\SortableObservableCollection.cs" />
     <Compile Include="Commons\WindowFunction.cs" />
     <Compile Include="Commons\WindowParameter.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
@@ -295,6 +296,7 @@
     <Compile Include="Navigation\NaviButtonRight.cs" />
     <Compile Include="Navigation\NavigationMV.cs" />
     <Compile Include="Security\Encrypt.cs" />
+    <Compile Include="Service\MaterialService.cs" />
     <Page Include="Forms\Login\LoginForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

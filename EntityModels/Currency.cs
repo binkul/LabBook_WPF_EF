@@ -16,6 +16,5 @@ namespace LabBook_WPF_EF.EntityModels
         public DateTime DateCreated { get; set; }
 
         public virtual ICollection<Material> MaterialList { get; set; }
-
     }
 }

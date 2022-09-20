@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace LabBook_WPF_EF.EntityModels
 {
-    public partial class Material
+    public partial class Material : INotifyPropertyChanged
     {
         public Material()
         {
-            MaterialGhsList = new HashSet<MaterialJoinGHS>();
+            MaterialJoinGhsList = new HashSet<MaterialJoinGHS>();
             MaterialJoinHpList = new HashSet<MaterialJoinHP>();
         }
 
@@ -39,7 +40,9 @@ namespace LabBook_WPF_EF.EntityModels
         public virtual Currency Currency { get; set; }
         public virtual Unit Unit { get; set; }
         public virtual User User { get; set; }
-        public virtual ICollection<MaterialJoinGHS> MaterialGhsList { get; set; }
+        public virtual ICollection<MaterialJoinGHS> MaterialJoinGhsList { get; set; }
         public virtual ICollection<MaterialJoinHP> MaterialJoinHpList { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

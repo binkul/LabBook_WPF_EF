@@ -4,13 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LabBook_WPF_EF.Forms.Materials"
+        xmlns:converters="clr-namespace:LabBook_WPF_EF.Converters"
         xmlns:vm="clr-namespace:LabBook_WPF_EF.Forms.Materials.ModelView"
         xmlns:naviMV="clr-namespace:LabBook_WPF_EF.Navigation"
-        xmlns:converters="clr-namespace:LabBook_WPF_EF.Converters"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MaterialMV, IsDesignTimeCreatable=false}"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        xmlns:wi="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:cmd="http://www.galasoft.ch/mvvmlight"
         Icon="/img/Atom.png"
         ResizeMode="CanResize"
@@ -18,18 +17,24 @@
         Height="{Binding FormHeight, Mode=TwoWay}" 
         Width="{Binding FormWidth, Mode=TwoWay}"
         Left="{Binding FormLeft, Mode=TwoWay}"
-        Top="{Binding FormTop, Mode=TwoWay}" Loaded="RibbonWindow_Loaded" >
+        Top="{Binding FormTop, Mode=TwoWay}" >
+    <Window.DataContext>
+        <vm:MaterialMV/>
+    </Window.DataContext>
+    <Window.Resources>
+        <naviMV:NavigationMV x:Key="navi" />
+        <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
+    </Window.Resources>
     <i:Interaction.Triggers>
+        <!-- Loaded form event -->
+        <i:EventTrigger EventName="Loaded">
+            <cmd:EventToCommand Command="{Binding OnLoadedCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
         <!-- Closing Form event -->
         <i:EventTrigger EventName="Closing">
             <cmd:EventToCommand Command="{Binding OnClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
-    <Window.Resources>
-        <naviMV:NavigationMV x:Key="navi" />
-        <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
-
-    </Window.Resources>
 
     <DockPanel Margin="0,0,0,0" >
         <!-- Menu Ribbon -->

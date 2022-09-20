@@ -20,13 +20,12 @@ namespace LabBook_WPF_EF.Service
         {
             _user = user;
             _contex = labBookContext;
-            //FullMaterials = GetMaterials();
-            //Materials = FullMaterials;
         }
 
         public SortableObservableCollection<Material> GetMaterials()
         {
             List<Material> tmpMaterial = _contex.Materials
+                .OrderBy(m => m.Name)
                 .Include(m => m.ClpSignalWord)
                 .Include(m => m.Currency)
                 .Include(m => m.Unit)
@@ -34,8 +33,7 @@ namespace LabBook_WPF_EF.Service
                 .Include(m => m.MaterialJoinGhsList)
                     .ThenInclude(m => m.ClpGHS)
                 .Include(m => m.MaterialJoinHpList)
-                    .ThenInclude( m => m.ClpPhraseHP)
-                .OrderBy(m => m.Name)
+                    .ThenInclude(m => m.ClpPhraseHP)
                 .ToList();
 
             return new SortableObservableCollection<Material>(tmpMaterial);

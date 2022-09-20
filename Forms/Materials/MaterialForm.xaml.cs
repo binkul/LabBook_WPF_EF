@@ -1,6 +1,7 @@
 ﻿using LabBook_WPF_EF.EntityModels;
 using LabBook_WPF_EF.Forms.Materials.ModelView;
 using LabBook_WPF_EF.Navigation;
+using LabBook_WPF_EF.Service;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
@@ -18,12 +19,15 @@ namespace LabBook_WPF_EF.Forms.Materials
         {
             InitializeComponent();
 
-            MaterialMV materialMV = new MaterialMV(context, user);
-            DataContext = materialMV;
+            //MaterialMV materialMV = new MaterialMV(context, user);
+            //DataContext = materialMV;
+            MaterialMV materialMV = (MaterialMV)DataContext;
+            MaterialService materialService = new MaterialService(user, context);
             NavigationMV navigationMV = Resources["navi"] as NavigationMV;
 
             navigationMV.ModelView = materialMV;
             materialMV.SetNavigationMV = navigationMV;
+            materialMV.SetService = materialService;
         }
 
         private void TxtBox_KeyUp(object sender, KeyEventArgs e)
@@ -42,12 +46,6 @@ namespace LabBook_WPF_EF.Forms.Materials
                     keyboardFocus.MoveFocus(tRequest);
                 }
             }
-        }
-
-        private void RibbonWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            MaterialMV materialMV = (MaterialMV)DataContext;
-            materialMV.PrepareForm();
         }
     }
 }

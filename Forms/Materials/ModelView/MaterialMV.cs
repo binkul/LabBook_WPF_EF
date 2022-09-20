@@ -26,22 +26,20 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         private NavigationMV _navigationMV;
         private int _selectedIndex;
-        private readonly User _user;
-        private readonly LabBookContext _context;
-        private readonly MaterialService _service;
         private readonly WindowFunction _windowFunction;
+        private MaterialService _service;
         private WindowParameter _windowParameter;
         public RelayCommand<CancelEventArgs> OnClosingCommand { get; set; }
+        public RelayCommand<RoutedEventArgs> OnLoadedCommand { get; set; }
 
 
-        public MaterialMV(LabBookContext context, User user)
+        public MaterialMV() //LabBookContext context, User user)
         {
-            _user = user;
-            _context = context;
-            _service = new MaterialService(user, context);
+            //_service = new MaterialService(user, context);
             _windowFunction = new WindowFunction();
             //_windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
             OnClosingCommand = new RelayCommand<CancelEventArgs>(OnClosingCommandExecuted);
+            OnLoadedCommand = new RelayCommand<RoutedEventArgs>(OnLoadedCommandExecuted);
 
             //OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
         }
@@ -57,6 +55,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
         }
 
+        internal MaterialService SetService
+        {
+            set => _service = value;
+        }
+
         internal NavigationMV SetNavigationMV
         {
             set => _navigationMV = value;
@@ -65,11 +68,14 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         public double FormLeft
         {
             get => _windowParameter != null ? _windowParameter.Left : 20;
+
             set
             {
-                if (_windowParameter == null) return;
-                _windowParameter.Left = value;
-                OnPropertyChanged(nameof(FormLeft));
+                if (_windowParameter != null)
+                {
+                    _windowParameter.Left = value;
+                    OnPropertyChanged(nameof(FormLeft));
+                }
             }
         }
 
@@ -78,9 +84,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             get => _windowParameter != null ? _windowParameter.Top : 20;
             set
             {
-                if (_windowParameter == null) return;
-                _windowParameter.Top = value;
-                OnPropertyChanged(nameof(FormTop));
+                if (_windowParameter != null)
+                {
+                    _windowParameter.Top = value;
+                    OnPropertyChanged(nameof(FormTop));
+                }
             }
         }
 
@@ -89,9 +97,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             get => _windowParameter != null ? _windowParameter.Width : 100;
             set
             {
-                if (_windowParameter == null) return;
-                _windowParameter.Width = value;
-                OnPropertyChanged(nameof(FormWidth));
+                if (_windowParameter != null)
+                {
+                    _windowParameter.Width = value;
+                    OnPropertyChanged(nameof(FormWidth));
+                }
             }
         }
 
@@ -100,9 +110,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             get => _windowParameter != null ? _windowParameter.Height : 100;
             set
             {
-                if (_windowParameter == null) return;
-                _windowParameter.Height = value;
-                OnPropertyChanged(nameof(FormHeight));
+                if (_windowParameter != null)
+                {
+                    _windowParameter.Height = value;
+                    OnPropertyChanged(nameof(FormHeight));
+                }
             }
         }
 
@@ -136,7 +148,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
         }
 
-        public void PrepareForm()
+        public void OnLoadedCommandExecuted(RoutedEventArgs e)
         {
             _windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
             OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));

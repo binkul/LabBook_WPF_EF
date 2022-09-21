@@ -18,18 +18,52 @@
         Width="{Binding FormWidth, Mode=TwoWay}"
         Left="{Binding FormLeft, Mode=TwoWay}"
         Top="{Binding FormTop, Mode=TwoWay}" >
-    <Window.DataContext>
-        <vm:MaterialMV/>
-    </Window.DataContext>
     <Window.Resources>
         <naviMV:NavigationMV x:Key="navi" />
         <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
+        <converters:DangerToRedColorConverter x:Key="DangerToRedConverter" />
+        <converters:PriceNullToBoldConverter x:Key="PriceToBoldConverter" />
+        <converters:PriceSelectedToColorConverter x:Key="PriceTocColorConverter" />
+        <Style x:Key="AllignColmnHeaderCenter" TargetType="DataGridColumnHeader">
+            <Setter Property="SeparatorBrush" Value="WhiteSmoke" />
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="25" />
+        </Style>
+        <Style x:Key="AllignCellCenter" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0,0,0,0" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+        <Style x:Key="AllignCellLeft" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="3,0,0,0" />
+            <Setter Property="FontWeight" Value="Normal" />
+        </Style>
+        <Style x:Key="DateErrorStyle" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="Background" Value="Yellow"/>
+                    <Setter Property="ToolTip" Value="Niepoprawny format daty"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="DoubleErrorStyle" TargetType="TextBox">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="Background" Value="Yellow"/>
+                    <Setter Property="ToolTip" Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <SolidColorBrush x:Key="DataGridBorderColor" Color="#FFB1AEAE"/>
     </Window.Resources>
     <i:Interaction.Triggers>
-        <!-- Loaded form event -->
-        <i:EventTrigger EventName="Loaded">
-            <cmd:EventToCommand Command="{Binding OnLoadedCommand}" PassEventArgsToCommand="True" />
-        </i:EventTrigger>
         <!-- Closing Form event -->
         <i:EventTrigger EventName="Closing">
             <cmd:EventToCommand Command="{Binding OnClosingCommand}" PassEventArgsToCommand="True" />
@@ -103,7 +137,7 @@
             </RibbonTab>
         </Ribbon>
 
-        <!-- Main grid -->
+        <!-- Grid and Tabs -->
         <Grid Background="#FFE5E5E5">
             <Grid.ColumnDefinitions >
                 <ColumnDefinition Width="65" />
@@ -133,7 +167,84 @@
                 
                 <!-- Main DataGrid -->
                 <TabItem Header="Strona główna" >
-                    
+                    <DataGrid x:Name="DgMaterial" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Margin="2,2,2,2" AutoGenerateColumns="False" 
+                      ColumnWidth="*" SelectionMode="Single" SelectionUnit="FullRow" IsSynchronizedWithCurrentItem="True" RowHeaderWidth="20"
+                      CanUserAddRows="False"  CanUserResizeColumns="True" CanUserResizeRows="False" FontSize="12" HeadersVisibility="Column"
+                      SelectionChanged="DgMaterial_SelectionChanged"
+                      HorizontalGridLinesBrush="{StaticResource DataGridBorderColor}"
+                      VerticalGridLinesBrush="{StaticResource DataGridBorderColor}"
+                      ItemsSource="{Binding Materials}" >
+                        <!--SelectedItem="{Binding ActualQuality, Mode=OneWayToSource}"
+                      SelectedIndex="{Binding DgRowIndex, Mode=TwoWay, FallbackValue=0}" >-->
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="ColId" Binding="{Binding Id}" Visibility="Collapsed" />
+                            <DataGridTextColumn x:Name="ColIsDanger" Binding="{Binding IsDanger}" Visibility="Collapsed" />
+
+                            <!-- Arrow selector -->
+                            <DataGridTemplateColumn x:Name="ColStatus" HeaderStyle="{StaticResource AllignColmnHeaderCenter}" 
+                                                        IsReadOnly="True" CanUserSort="False" CanUserResize="False"
+                                                        Width="30">
+                                <DataGridTemplateColumn.CellTemplate >
+                                    <DataTemplate>
+                                        <StackPanel Background="#FFE5E5E5" Margin="-1,-1,-1,-1">
+                                            <Image x:Name="ArrowRight" Width="18" Height="16" Margin="1,1,1,1" Source="/Img/Arrow-right.png" 
+                                                   Visibility="Hidden">
+                                            </Image>
+                                        </StackPanel>
+                                        <DataTemplate.Triggers>
+                                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True" >
+                                                <Setter TargetName="ArrowRight" Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+
+                            <!-- column material name -->
+                            <DataGridTextColumn x:Name="ColMaterialName" Header="Nazwa" IsReadOnly="False" Width="0.8*" CanUserSort="False"
+                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                        Binding="{Binding Name}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Setter Property="Foreground" Value="{Binding IsDanger, Converter={StaticResource DangerToRedConverter}, Mode=OneWay}"/>
+                                        <Setter Property="HorizontalAlignment" Value="Left" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                        <Setter Property="FontSize" Value="12" />
+                                        <Setter Property="Padding" Value="5 0 0 0" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+
+                            <!-- column material function -->
+                            <DataGridComboBoxColumn x:Name="ColFunction" CanUserSort="False" Header="Funkcja" Width="140"
+                                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                                        ItemsSource="{Binding MaterialFunctions}"
+                                                        SelectedValuePath="Id"
+                                                        DisplayMemberPath="Name"
+                                                        SelectedValueBinding="{Binding FunctionId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=1}" />
+
+                            <!-- column price -->
+                            <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" Width="0.1*" CanUserSort="False"
+                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                        Binding="{Binding Price}">
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="{x:Type DataGridCell}">
+                                        <Setter Property="FontWeight" Value="{Binding Price, Converter={StaticResource PriceToBoldConverter}}" />
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridCell.IsSelected" Value="False">
+                                                <Setter Property="Background" Value="{Binding Price, Converter={StaticResource PriceTocColorConverter}}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+
+
+
+                        </DataGrid.Columns>
+                        
+                    </DataGrid>
                 </TabItem>
                 
                 <!-- Data and remarks -->

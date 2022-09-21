@@ -19,15 +19,15 @@ namespace LabBook_WPF_EF.Forms.Materials
         {
             InitializeComponent();
 
-            //MaterialMV materialMV = new MaterialMV(context, user);
-            //DataContext = materialMV;
-            MaterialMV materialMV = (MaterialMV)DataContext;
-            MaterialService materialService = new MaterialService(user, context);
+            MaterialMV materialMV = new MaterialMV(context, user);
+            DataContext = materialMV;
+            //MaterialMV materialMV = (MaterialMV)DataContext;
+            //MaterialService materialService = new MaterialService(user, context);
             NavigationMV navigationMV = Resources["navi"] as NavigationMV;
 
             navigationMV.ModelView = materialMV;
             materialMV.SetNavigationMV = navigationMV;
-            materialMV.SetService = materialService;
+            //materialMV.SetService = materialService;
         }
 
         private void TxtBox_KeyUp(object sender, KeyEventArgs e)
@@ -47,5 +47,21 @@ namespace LabBook_WPF_EF.Forms.Materials
                 }
             }
         }
+
+        private void DgMaterial_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int index = DgMaterial.SelectedIndex;
+            if (index < 0)
+            {
+                return;
+            }
+
+            object item = DgMaterial.Items[index];
+            if (!(DgMaterial.ItemContainerGenerator.ContainerFromIndex(index) is DataGridRow))
+            {
+                DgMaterial.ScrollIntoView(item);
+            }
+        }
+
     }
 }

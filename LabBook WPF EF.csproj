@@ -266,7 +266,10 @@
     <Compile Include="Commons\SortableObservableCollection.cs" />
     <Compile Include="Commons\WindowFunction.cs" />
     <Compile Include="Commons\WindowParameter.cs" />
+    <Compile Include="Converters\DangerToRedColorConverter.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
+    <Compile Include="Converters\PriceNullToBoldConverter.cs" />
+    <Compile Include="Converters\PriceSelectedToColorConverter.cs" />
     <Compile Include="EntityModels\ClpGHS.cs" />
     <Compile Include="EntityModels\ClpPhraseHP.cs" />
     <Compile Include="EntityModels\ClpSignalWord.cs" />

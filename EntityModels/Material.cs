@@ -6,7 +6,10 @@ namespace LabBook_WPF_EF.EntityModels
 {
     public partial class Material : INotifyPropertyChanged
     {
-        public Material()
+       private long _functionId;
+       private long _currencyId;
+
+       public Material()
         {
             MaterialJoinGhsList = new HashSet<MaterialJoinGHS>();
             MaterialJoinHpList = new HashSet<MaterialJoinHP>();
@@ -22,9 +25,24 @@ namespace LabBook_WPF_EF.EntityModels
         public long IntermediateNrD { get; set; } = -1;
         public long ClpSignalWordId { get; set; }
         public long ClpMsdsId { get; set; }
-        public long FunctionId { get; set; }
+        public long FunctionId 
+        { get => _functionId;
+            set
+            {
+                _functionId = value;
+                OnPropertyChanged(nameof(FunctionId));
+            }
+        }
         public decimal? Price { get; set; }
-        public long CurrencyId { get; set; }
+        public long CurrencyId
+        {
+            get => _currencyId;
+            set
+            {
+                _currencyId = value;
+                OnPropertyChanged(nameof(CurrencyId));
+            }
+        }
         public long UnitId { get; set; }
         public double? Density { get; set; }
         public double? Solids { get; set; }
@@ -44,5 +62,14 @@ namespace LabBook_WPF_EF.EntityModels
         public virtual ICollection<MaterialJoinHP> MaterialJoinHpList { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(params string[] names)
+        {
+            if (PropertyChanged != null)
+            {
+                foreach (string name in names)
+                    PropertyChanged(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
     }
 }

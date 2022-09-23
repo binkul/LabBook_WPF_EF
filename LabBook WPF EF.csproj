@@ -262,10 +262,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Commons\CombosVM.cs" />
     <Compile Include="Commons\IPosition.cs" />
     <Compile Include="Commons\SortableObservableCollection.cs" />
     <Compile Include="Commons\WindowFunction.cs" />
     <Compile Include="Commons\WindowParameter.cs" />
+    <Compile Include="Converters\CurrencyToBoldConverter.cs" />
+    <Compile Include="Converters\CurrencyToColorConverter.cs" />
     <Compile Include="Converters\DangerToRedColorConverter.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
     <Compile Include="Converters\PriceNullToBoldConverter.cs" />

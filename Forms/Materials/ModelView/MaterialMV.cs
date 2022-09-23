@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace LabBook_WPF_EF.Forms.Materials.ModelView
@@ -30,6 +31,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private readonly MaterialService _service;
         private readonly WindowParameter _windowParameter;
         public RelayCommand<CancelEventArgs> OnClosingCommand { get; set; }
+        public RelayCommand<SelectionChangedEventArgs> OnComboSelectionIndexChanged { get; set; }
 
 
         public MaterialMV(LabBookContext context, User user)
@@ -38,6 +40,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             _windowParameter = _windowFunction.LoadWindowParamaters(_formPath); // new WindowParameter();
             _service = new MaterialService(user, context);
             OnClosingCommand = new RelayCommand<CancelEventArgs>(OnClosingCommandExecuted);
+            OnComboSelectionIndexChanged = new RelayCommand<SelectionChangedEventArgs>(OnComboSelectionIndexChangedExecuted);
 
             OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
         }
@@ -105,7 +108,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         public SortableObservableCollection<Material> Materials => _service.Materials;
 
-        public List<MaterialFunction> MaterialFunctions => _service.MaterialFunctions;
+        public SortableObservableCollection<MaterialFunction> MaterialFunctions => _service.MaterialFunctions;
 
         public void OnClosingCommandExecuted(CancelEventArgs e)
         {
@@ -129,6 +132,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             {
                 _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
             }
+        }
+
+        public void OnComboSelectionIndexChangedExecuted(SelectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(Materials));
         }
 
         #region Navigation

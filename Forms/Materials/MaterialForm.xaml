@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:LabBook_WPF_EF.Forms.Materials"
         xmlns:converters="clr-namespace:LabBook_WPF_EF.Converters"
         xmlns:vm="clr-namespace:LabBook_WPF_EF.Forms.Materials.ModelView"
+        xmlns:vo="clr-namespace:LabBook_WPF_EF.Commons"
         xmlns:naviMV="clr-namespace:LabBook_WPF_EF.Navigation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MaterialMV, IsDesignTimeCreatable=false}"
@@ -19,11 +20,14 @@
         Left="{Binding FormLeft, Mode=TwoWay}"
         Top="{Binding FormTop, Mode=TwoWay}" >
     <Window.Resources>
+        <vo:CombosVM x:Key="combos" />
         <naviMV:NavigationMV x:Key="navi" />
         <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
         <converters:DangerToRedColorConverter x:Key="DangerToRedConverter" />
         <converters:PriceNullToBoldConverter x:Key="PriceToBoldConverter" />
         <converters:PriceSelectedToColorConverter x:Key="PriceTocColorConverter" />
+        <converters:CurrencyToColorConverter x:Key="CurrncyToColorConverter" />
+        <converters:CurrencyToBoldConverter x:Key="CurrencyToBoldConverter" />
         <Style x:Key="AllignColmnHeaderCenter" TargetType="DataGridColumnHeader">
             <Setter Property="SeparatorBrush" Value="WhiteSmoke" />
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -180,6 +184,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ColId" Binding="{Binding Id}" Visibility="Collapsed" />
                             <DataGridTextColumn x:Name="ColIsDanger" Binding="{Binding IsDanger}" Visibility="Collapsed" />
+                            <DataGridTextColumn x:Name="ColMatFunction" Binding="{Binding FunctionId}" Visibility="Collapsed" />
 
                             <!-- Arrow selector -->
                             <DataGridTemplateColumn x:Name="ColStatus" HeaderStyle="{StaticResource AllignColmnHeaderCenter}" 
@@ -216,14 +221,39 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <!-- column material function -->
-                            <DataGridComboBoxColumn x:Name="ColFunction" CanUserSort="False" Header="Funkcja" Width="140"
-                                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
-                                                        ItemsSource="{Binding MaterialFunctions}"
-                                                        SelectedValuePath="Id"
-                                                        DisplayMemberPath="Name"
-                                                        SelectedValueBinding="{Binding FunctionId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=1}" />
+                            <!-- TMP -->
+                            <!--<DataGridTextColumn x:Name="ColMID" Header="MID" IsReadOnly="False" Width="0.1*" CanUserSort="False"
+                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                        Binding="{Binding FunctionId}"/>-->
 
+
+                            <!-- column material function -->
+                            <!--ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}},
+                                                                Path=DataContext.MaterialFunctions, Mode=OneWay}"-->
+                            <DataGridTemplateColumn CanUserSort="False" Header="Funkcja" Width="140"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsReadOnly="true" IsEditable="False" 
+                                                  ItemsSource="{Binding Source={StaticResource combos}, Path=MaterialFunctions}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id"
+                                                  SelectedItem="{Binding MaterialFunction, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectedValue="{Binding FunctionId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=1}" >
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="SelectionChanged">
+                                                    <cmd:EventToCommand Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OnComboSelectionIndexChanged, Mode=OneWay}" PassEventArgsToCommand="True" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            
+                            
+                            
+                            
+                            
                             <!-- column price -->
                             <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" Width="0.1*" CanUserSort="False"
                                         HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
@@ -231,6 +261,7 @@
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="{x:Type DataGridCell}">
                                         <Setter Property="FontWeight" Value="{Binding Price, Converter={StaticResource PriceToBoldConverter}}" />
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
                                         <Style.Triggers>
                                             <Trigger Property="DataGridCell.IsSelected" Value="False">
                                                 <Setter Property="Background" Value="{Binding Price, Converter={StaticResource PriceTocColorConverter}}" />
@@ -239,6 +270,33 @@
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
+
+                            <!-- column currency -->
+                            <DataGridTemplateColumn CanUserSort="False" Header="Waluta" Width="70"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsReadOnly="true" IsEditable="False" 
+                                                  ItemsSource="{Binding Source={StaticResource combos}, Path=Currencies}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id"
+                                                  SelectedItem="{Binding Currency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectedValue="{Binding CurrencyId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=1}" >
+                                            <ComboBox.Style>
+                                                <Style TargetType="ComboBox">
+                                                    <Setter Property="Foreground" Value="{Binding CurrencyId, Mode=OneWay, Converter={StaticResource CurrncyToColorConverter}}" />
+                                                    <Setter Property="FontWeight" Value="{Binding CurrencyId, Mode=OneWay, Converter={StaticResource CurrencyToBoldConverter}}" />
+                                                </Style>
+                                            </ComboBox.Style>
+                                            <i:Interaction.Triggers>
+                                                <i:EventTrigger EventName="SelectionChanged">
+                                                    <cmd:EventToCommand Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}}, Path=DataContext.OnComboSelectionIndexChanged, Mode=OneWay}" PassEventArgsToCommand="True" />
+                                                </i:EventTrigger>
+                                            </i:Interaction.Triggers>
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
 
 

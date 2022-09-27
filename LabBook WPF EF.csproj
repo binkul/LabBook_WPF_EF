@@ -303,6 +303,7 @@
     <Compile Include="Navigation\NavigationMV.cs" />
     <Compile Include="Security\Encrypt.cs" />
     <Compile Include="Service\MaterialService.cs" />
+    <Compile Include="Validation\DoubleCellValidation.cs" />
     <Page Include="Forms\Login\LoginForm.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

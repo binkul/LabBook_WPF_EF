@@ -8,6 +8,7 @@
         xmlns:vm="clr-namespace:LabBook_WPF_EF.Forms.Materials.ModelView"
         xmlns:vo="clr-namespace:LabBook_WPF_EF.Commons"
         xmlns:naviMV="clr-namespace:LabBook_WPF_EF.Navigation"
+        xmlns:val="clr-namespace:LabBook_WPF_EF.Validation"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=vm:MaterialMV, IsDesignTimeCreatable=false}"
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
@@ -53,7 +54,7 @@
             <Setter Property="FontSize" Value="12" />
             <Setter Property="HorizontalAlignment" Value="Right" />
             <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Padding" Value="0,0,3,0" />
+            <Setter Property="Padding" Value="0,0,4,0" />
         </Style>
         <Style x:Key="DateErrorStyle" TargetType="TextBox">
             <Style.Triggers>
@@ -64,12 +65,20 @@
             </Style.Triggers>
         </Style>
         <Style x:Key="DoubleErrorStyle" TargetType="TextBox">
+            <Setter Property="Margin" Value="-1" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="0,0,4,0" />
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
-                    <Setter Property="Background" Value="Yellow"/>
+                    <Setter Property="Background" Value="#FFFF9999" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
                     <Setter Property="ToolTip" Value="{Binding (Validation.Errors)[0].ErrorContent, RelativeSource={RelativeSource Self}}"/>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+        <Style x:Key="FrameArounCombo" TargetType="DataGridCell">
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
         <SolidColorBrush x:Key="DataGridBorderColor" Color="#FFB1AEAE"/>
     </Window.Resources>
@@ -227,16 +236,11 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <!-- TMP -->
-                            <!--<DataGridTextColumn x:Name="ColMID" Header="MID" IsReadOnly="False" Width="0.1*" CanUserSort="False"
-                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
-                                        Binding="{Binding FunctionId}"/>-->
-
-
                             <!-- column material function -->
                             <!--ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}},
                                                                 Path=DataContext.MaterialFunctions, Mode=OneWay}"-->
                             <DataGridTemplateColumn CanUserSort="False" Header="Funkcja" Width="140"
+                                                    CellStyle="{StaticResource FrameArounCombo}"
                                                     HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -255,22 +259,27 @@
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            
-                            
-                            
-                            
-                            
+
+
+
+
                             <!-- column price -->
                             <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" Width="0.1*" CanUserSort="False"
                                                 HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
-                                                ElementStyle="{StaticResource AllignCellRight}"
-                                                Binding="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture='pl-PL', StringFormat={}{0:G}}">
+                                                EditingElementStyle="{StaticResource DoubleErrorStyle}"
+                                                ElementStyle="{StaticResource AllignCellRight}" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="Price" UpdateSourceTrigger="LostFocus" Mode="TwoWay" StringFormat="G" ConverterCulture="pl-PL"
+                                             ValidatesOnDataErrors="True" >
+                                        <Binding.ValidationRules>
+                                            <val:DoubleCellValidation />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </DataGridTextColumn.Binding>
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="{x:Type DataGridCell}">
                                         <Setter Property="FontWeight" Value="{Binding Price, Converter={StaticResource PriceToBoldConverter}}" />
-                                        <Setter Property="Margin" Value="0" />
                                         <Setter Property="BorderThickness" Value="0" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
                                         <Style.Triggers>
                                             <Trigger Property="DataGridCell.IsSelected" Value="False">
                                                 <Setter Property="Background" Value="{Binding Price, Converter={StaticResource PriceTocColorConverter}}" />
@@ -288,6 +297,7 @@
 
                             <!-- column currency -->
                             <DataGridTemplateColumn CanUserSort="False" Header="Waluta" Width="70"
+                                                    CellStyle="{StaticResource FrameArounCombo}"
                                                     HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>

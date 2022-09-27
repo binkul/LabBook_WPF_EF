@@ -9,7 +9,7 @@ namespace LabBook_WPF_EF.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null) return Brushes.White;
+            if (value == null) return Brushes.Yellow;
 
             string num = value.ToString();
 

@@ -8,6 +8,7 @@ namespace LabBook_WPF_EF.EntityModels
     {
        private long _functionId;
        private long _currencyId;
+       private decimal? _price;
 
        public Material()
         {
@@ -33,7 +34,15 @@ namespace LabBook_WPF_EF.EntityModels
                 OnPropertyChanged(nameof(FunctionId));
             }
         }
-        public decimal? Price { get; set; }
+        public decimal? Price
+        {
+            get => _price;
+            set
+            {
+                _price = value;
+                OnPropertyChanged(nameof(Price));
+            }
+        }
         public long CurrencyId
         {
             get => _currencyId;

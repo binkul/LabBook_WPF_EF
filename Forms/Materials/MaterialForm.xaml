@@ -49,6 +49,12 @@
             <Setter Property="Padding" Value="3,0,0,0" />
             <Setter Property="FontWeight" Value="Normal" />
         </Style>
+        <Style x:Key="AllignCellRight" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Padding" Value="0,0,3,0" />
+        </Style>
         <Style x:Key="DateErrorStyle" TargetType="TextBox">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
@@ -256,20 +262,29 @@
                             
                             <!-- column price -->
                             <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" Width="0.1*" CanUserSort="False"
-                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
-                                        Binding="{Binding Price}">
+                                                HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                                ElementStyle="{StaticResource AllignCellRight}"
+                                                Binding="{Binding Price, Mode=TwoWay, UpdateSourceTrigger=LostFocus, ConverterCulture='pl-PL', StringFormat={}{0:G}}">
                                 <DataGridTextColumn.CellStyle>
                                     <Style TargetType="{x:Type DataGridCell}">
                                         <Setter Property="FontWeight" Value="{Binding Price, Converter={StaticResource PriceToBoldConverter}}" />
-                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                        <Setter Property="Margin" Value="0" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
                                         <Style.Triggers>
                                             <Trigger Property="DataGridCell.IsSelected" Value="False">
                                                 <Setter Property="Background" Value="{Binding Price, Converter={StaticResource PriceTocColorConverter}}" />
+                                            </Trigger>
+                                            <Trigger Property="DataGridCell.IsEditing" Value="True" >
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
+
+
 
                             <!-- column currency -->
                             <DataGridTemplateColumn CanUserSort="False" Header="Waluta" Width="70"

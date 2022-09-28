@@ -14,6 +14,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
     public class MaterialMV : INotifyPropertyChanged, INavigation
     {
         private readonly string _formPath = @"\Data\Forms\MaterialForm.xml";
+        private readonly string _name = "Name";
+        private readonly string _function = "Function";
+        private readonly string _price = "Price";
+        private readonly string _currency = "Currency";
+        private readonly string _unit = "Unit";
 
         private ICommand _saveButton;
         private ICommand _deleteButton;
@@ -23,12 +28,14 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private double _colNameWidth = 100;
         private double _colFunctionWidth = 100;
         private double _colPriceWidth = 100;
+        private double _colCurrencyWidth = 50;
+        private double _colUnitWidth = 50;
 
         private NavigationMV _navigationMV;
         private int _selectedIndex = 0;
         private readonly WindowFunction _windowFunction;
         private readonly MaterialService _service;
-        private readonly WindowParameter _windowParameter;
+        private WindowParameter _windowParameter;
         public RelayCommand<CancelEventArgs> OnClosingCommand { get; set; }
         public RelayCommand<SelectionChangedEventArgs> OnComboSelectionIndexChanged { get; set; }
 
@@ -36,12 +43,11 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         public MaterialMV(LabBookContext context, User user)
         {
             _windowFunction = new WindowFunction();
-            _windowParameter = _windowFunction.LoadWindowParamaters(_formPath); // new WindowParameter();
             _service = new MaterialService(user, context);
             OnClosingCommand = new RelayCommand<CancelEventArgs>(OnClosingCommandExecuted);
             OnComboSelectionIndexChanged = new RelayCommand<SelectionChangedEventArgs>(OnComboSelectionIndexChangedExecuted);
 
-            OnPropertyChanged(nameof(FormLeft), nameof(FormTop), nameof(FormWidth), nameof(FormHeight));
+            SetWindowsParameter();
         }
 
 
@@ -131,6 +137,26 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
         }
 
+        public double ColCurrencyWidth
+        {
+            get => _colCurrencyWidth;
+            set
+            {
+                _colCurrencyWidth = value;
+                OnPropertyChanged(nameof(ColCurrencyWidth));
+            }
+        }
+
+        public double ColUnitWidth
+        {
+            get => _colUnitWidth;
+            set
+            {
+                _colUnitWidth = value;
+                OnPropertyChanged(nameof(ColUnitWidth));
+            }
+        }
+
         public bool Modified => false; // _materialService.Modified;
 
         public bool IsDanger => true;
@@ -138,6 +164,41 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         public SortableObservableCollection<Material> Materials => _service.Materials;
 
         public SortableObservableCollection<MaterialFunction> MaterialFunctions => _service.MaterialFunctions;
+
+        private void SetWindowsParameter()
+        {
+            _windowParameter = _windowFunction.LoadWindowParamaters(_formPath);
+
+            if (_windowParameter.IsAnyGridWidth())
+            {
+                ColNameWidth = _windowParameter.GetGridColummnWidth(_name);
+                ColFunctionWidth = _windowParameter.GetGridColummnWidth(_function);
+                ColPriceWidth = _windowParameter.GetGridColummnWidth(_price);
+                ColCurrencyWidth = _windowParameter.GetGridColummnWidth(_currency);
+                ColUnitWidth = _windowParameter.GetGridColummnWidth(_unit);
+            }
+
+            OnPropertyChanged(
+                nameof(FormLeft), 
+                nameof(FormTop), 
+                nameof(FormWidth), 
+                nameof(FormHeight),
+                nameof(ColNameWidth),
+                nameof(ColFunctionWidth),
+                nameof(ColPriceWidth),
+                nameof(ColCurrencyWidth),
+                nameof(ColUnitWidth));
+        }
+
+        private void SaveWidnowsParameter()
+        {
+            _windowParameter.AddColumnWidth(_name, _colNameWidth);
+            _windowParameter.AddColumnWidth(_function, _colFunctionWidth);
+            _windowParameter.AddColumnWidth(_price, _colPriceWidth);
+            _windowParameter.AddColumnWidth(_currency, _colCurrencyWidth);
+            _windowParameter.AddColumnWidth(_unit, _colUnitWidth);
+            _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
+        }
 
         public void OnClosingCommandExecuted(CancelEventArgs e)
         {
@@ -151,10 +212,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             if (answer == MessageBoxResult.Yes)
             {
                 Save();
-                _windowParameter.AddColumnWidth("Name", _colNameWidth);
-                _windowParameter.AddColumnWidth("Function", _colFunctionWidth);
-                _windowParameter.AddColumnWidth("Price", _colPriceWidth);
-                _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
+                SaveWidnowsParameter();
             }
             else if (answer == MessageBoxResult.Cancel)
             {
@@ -162,10 +220,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
             else
             {
-                _windowParameter.AddColumnWidth("Name", _colNameWidth);
-                _windowParameter.AddColumnWidth("Function", _colFunctionWidth);
-                _windowParameter.AddColumnWidth("Price", _colPriceWidth);
-                _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
+                SaveWidnowsParameter();
             }
         }
 

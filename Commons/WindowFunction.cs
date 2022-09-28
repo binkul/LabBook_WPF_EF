@@ -36,40 +36,24 @@ namespace LabBook_WPF_EF.Commons
                 windowParameter.Width = double.Parse(width, CultureInfo.InvariantCulture);
                 windowParameter.Height = double.Parse(height, CultureInfo.InvariantCulture);
 
-                //XmlElement position = xml .Root.Element("window").Element("position");
-                //windowParameter.Left = double.Parse(position.Element("x").Value, CultureInfo.InvariantCulture);
-                //windowParameter.Top = double.Parse(position.Element("y").Value, CultureInfo.InvariantCulture);
-
-                //XElement size = xml.Root.Element("window").Element("size");
-                //windowParameter.Width = double.Parse(size.Element("width").Value, CultureInfo.InvariantCulture);
-                //windowParameter.Height = double.Parse(size.Element("height").Value, CultureInfo.InvariantCulture);
-
-                //XElement datagrid = xml.Root.Element("window").Element("datagrid");
-
-                var items = xml.SelectNodes("//window/datagrid");
+                var items = xml.SelectSingleNode("//window/datagrid");
                 if (items != null)
                 {
                     foreach(XmlNode item in items)
                     {
-                        string name = item.FirstChild.Name;
-                        string value = item.FirstChild.InnerText;
-                        windowParameter.AddColumnWidth(name, double.Parse(value));
+                        string name = item.Name;
+                        string value = item.FirstChild.Value;
+                        double result = 100.0;
+                        if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out result))
+                        {
+                            windowParameter.AddColumnWidth(name, result);
+                        }
                     }
                 }
-                //var root = xml.docu
-                //foreach(var item in items)
-                //{
-                //    windowParameter.AddColumnWidth()
-                //}
-
-                //if (datagrid != null)
-                //{
-                //    IEnumerable<IDictionary<string, string>> data = (IEnumerable<IDictionary<string, string>>)datagrid.Elements();
-                //}
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Błąd przy zapisywaniu do pliku '" + file + "'\n" + ex.Message, "Błąd zapisu", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Błąd przy odczycie i konwersji pliku '" + file + "'\n" + ex.Message, "Błąd odczytu", MessageBoxButton.OK, MessageBoxImage.Error);
             }
 
             return windowParameter;
@@ -125,7 +109,7 @@ namespace LabBook_WPF_EF.Commons
             }
             catch(Exception ex)
             {
-                MessageBox.Show("Błąd przy zapisywaniu do pliku '" + file + "'\n" + ex.Message, "Błąd zapisu", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Błąd zapisu do pliku '" + file + "'\n" + ex.Message, "Błąd zapisu", MessageBoxButton.OK, MessageBoxImage.Error);
                 result = false;
             }
 

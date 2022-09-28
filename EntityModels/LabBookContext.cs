@@ -267,6 +267,8 @@ namespace LabBook_WPF_EF.EntityModels
             modelBuilder.Entity<Material>(entity =>
             {
                 entity.ToTable("Material");
+                entity.Ignore(e => e.Modified);
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Name)

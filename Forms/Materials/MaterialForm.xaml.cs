@@ -21,13 +21,10 @@ namespace LabBook_WPF_EF.Forms.Materials
 
             MaterialMV materialMV = new MaterialMV(context, user);
             DataContext = materialMV;
-            //MaterialMV materialMV = (MaterialMV)DataContext;
-            //MaterialService materialService = new MaterialService(user, context);
             NavigationMV navigationMV = Resources["navi"] as NavigationMV;
 
             navigationMV.ModelView = materialMV;
             materialMV.SetNavigationMV = navigationMV;
-            //materialMV.SetService = materialService;
         }
 
         private void TxtBox_KeyUp(object sender, KeyEventArgs e)
@@ -62,6 +59,5 @@ namespace LabBook_WPF_EF.Forms.Materials
                 DgMaterial.ScrollIntoView(item);
             }
         }
-
     }
 }

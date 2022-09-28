@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LabBook_WPF_EF.Forms.Materials"
         xmlns:converters="clr-namespace:LabBook_WPF_EF.Converters"
+        xmlns:commons="clr-namespace:LabBook_WPF_EF.Commons"
         xmlns:vm="clr-namespace:LabBook_WPF_EF.Forms.Materials.ModelView"
         xmlns:vo="clr-namespace:LabBook_WPF_EF.Commons"
         xmlns:naviMV="clr-namespace:LabBook_WPF_EF.Navigation"
@@ -23,18 +24,28 @@
     <Window.Resources>
         <vo:CombosVM x:Key="combos" />
         <naviMV:NavigationMV x:Key="navi" />
+        <commons:DataContextProxy x:Key="proxy" Data="{Binding}" />
         <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
         <converters:DangerToRedColorConverter x:Key="DangerToRedConverter" />
         <converters:PriceNullToBoldConverter x:Key="PriceToBoldConverter" />
         <converters:PriceSelectedToColorConverter x:Key="PriceTocColorConverter" />
         <converters:CurrencyToColorConverter x:Key="CurrncyToColorConverter" />
         <converters:CurrencyToBoldConverter x:Key="CurrencyToBoldConverter" />
+        <converters:DataGridLenghtToDoubleConverter x:Key="DoubleToLenghtConverter" />
         <Style x:Key="AllignColmnHeaderCenter" TargetType="DataGridColumnHeader">
             <Setter Property="SeparatorBrush" Value="WhiteSmoke" />
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="FontSize" Value="13" />
             <Setter Property="Height" Value="25" />
+        </Style>
+        <Style x:Key="AllignColmnHeaderCenterWithRed" TargetType="DataGridColumnHeader">
+            <Setter Property="SeparatorBrush" Value="WhiteSmoke" />
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Height" Value="25" />
+            <Setter Property="Foreground" Value="Red" />
         </Style>
         <Style x:Key="AllignCellCenter" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12" />
@@ -187,14 +198,14 @@
                 <!-- Main DataGrid -->
                 <TabItem Header="Strona główna" >
                     <DataGrid x:Name="DgMaterial" Grid.Column="0" Grid.Row="1" Grid.RowSpan="2" Margin="2,2,2,2" AutoGenerateColumns="False" 
-                      ColumnWidth="*" SelectionMode="Single" SelectionUnit="FullRow" IsSynchronizedWithCurrentItem="True" RowHeaderWidth="20"
-                      CanUserAddRows="False"  CanUserResizeColumns="True" CanUserResizeRows="False" FontSize="12" HeadersVisibility="Column"
-                      SelectionChanged="DgMaterial_SelectionChanged"
-                      HorizontalGridLinesBrush="{StaticResource DataGridBorderColor}"
-                      VerticalGridLinesBrush="{StaticResource DataGridBorderColor}"
-                      ItemsSource="{Binding Materials}" >
-                        <!--SelectedItem="{Binding ActualQuality, Mode=OneWayToSource}"
-                      SelectedIndex="{Binding DgRowIndex, Mode=TwoWay, FallbackValue=0}" >-->
+                              SelectionMode="Single" SelectionUnit="FullRow" IsSynchronizedWithCurrentItem="True" RowHeaderWidth="20"
+                              CanUserAddRows="False"  CanUserResizeColumns="True" CanUserResizeRows="False" FontSize="12" HeadersVisibility="Column"
+                              SelectionChanged="DgMaterial_SelectionChanged"
+                              HorizontalGridLinesBrush="{StaticResource DataGridBorderColor}"
+                              VerticalGridLinesBrush="{StaticResource DataGridBorderColor}"
+                              ItemsSource="{Binding Materials}" 
+                              SelectedIndex="{Binding DgRowIndex, Mode=TwoWay, FallbackValue=0}">
+                        <!--SelectedItem="{Binding ActualQuality, Mode=OneWayToSource}">-->
 
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ColId" Binding="{Binding Id}" Visibility="Collapsed" />
@@ -222,9 +233,10 @@
                             </DataGridTemplateColumn>
 
                             <!-- column material name -->
-                            <DataGridTextColumn x:Name="ColMaterialName" Header="Nazwa" IsReadOnly="False" Width="0.8*" CanUserSort="False"
-                                        HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
-                                        Binding="{Binding Name}">
+                            <DataGridTextColumn x:Name="ColMaterialName" Header="Nazwa" IsReadOnly="False" CanUserSort="False"
+                                                Width="{Binding Data.ColNameWidth, Source={StaticResource proxy}, Converter={StaticResource DoubleToLenghtConverter}, Mode=TwoWay}"
+                                                HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                                Binding="{Binding Name}">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}">
                                         <Setter Property="Foreground" Value="{Binding IsDanger, Converter={StaticResource DangerToRedConverter}, Mode=OneWay}"/>
@@ -236,10 +248,30 @@
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
+                            <!-- column aktiv -->
+                            <DataGridCheckBoxColumn x:Name="ColAktiv" Header="Aktyw."
+                                                    CanUserSort="False"
+                                                    Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="0.1*"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" />
+
+                            <!-- column production -->
+                            <DataGridCheckBoxColumn x:Name="ColProd" Header="Prod."
+                                                    CanUserSort="False"
+                                                    Binding="{Binding IsProduction, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="0.1*"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" />
+
+                            <!-- column danger -->
+                            <DataGridCheckBoxColumn x:Name="ColDanger" Header="Nieb."
+                                                    CanUserSort="False"
+                                                    Binding="{Binding IsDanger, UpdateSourceTrigger=PropertyChanged}"
+                                                    Width="0.1*"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenterWithRed}" />
+
                             <!-- column material function -->
-                            <!--ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type DataGrid}},
-                                                                Path=DataContext.MaterialFunctions, Mode=OneWay}"-->
-                            <DataGridTemplateColumn CanUserSort="False" Header="Funkcja" Width="140"
+                            <DataGridTemplateColumn CanUserSort="False" Header="Funkcja"
+                                                    Width="{Binding Data.ColFunctionWidth, Source={StaticResource proxy}, Converter={StaticResource DoubleToLenghtConverter}, Mode=TwoWay}"
                                                     CellStyle="{StaticResource FrameArounCombo}"
                                                     HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
                                 <DataGridTemplateColumn.CellTemplate>
@@ -260,11 +292,9 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-
-
-
                             <!-- column price -->
-                            <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" Width="0.1*" CanUserSort="False"
+                            <DataGridTextColumn x:Name="ColPrice" Header="Cena" IsReadOnly="False" CanUserSort="False"
+                                                Width="{Binding Data.ColPriceWidth, Source={StaticResource proxy}, Converter={StaticResource DoubleToLenghtConverter}, Mode=TwoWay}"
                                                 HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
                                                 EditingElementStyle="{StaticResource DoubleErrorStyle}"
                                                 ElementStyle="{StaticResource AllignCellRight}" >
@@ -292,8 +322,6 @@
                                     </Style>
                                 </DataGridTextColumn.CellStyle>
                             </DataGridTextColumn>
-
-
 
                             <!-- column currency -->
                             <DataGridTemplateColumn CanUserSort="False" Header="Waluta" Width="70"
@@ -323,7 +351,22 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
-
+                            <!-- column jednostka -->
+                            <DataGridTemplateColumn CanUserSort="False" Header="Jedn." Width="70"
+                                                    CellStyle="{StaticResource FrameArounCombo}"
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <ComboBox IsReadOnly="true" IsEditable="False" 
+                                                  ItemsSource="{Binding Source={StaticResource combos}, Path=Units}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id"
+                                                  SelectedItem="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  SelectedValue="{Binding UnitId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, FallbackValue=1}" >
+                                        </ComboBox>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                         </DataGrid.Columns>
                         
@@ -346,6 +389,7 @@
                 </TabItem>
             </TabControl>
 
+            <!-- Navigation -->
             <StackPanel Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="2" Orientation="Horizontal" >
                 <Button  x:Name="BtnNaviLeftFirst" Height="20" Width="20" Tag="first" Margin="5,0,0,0" 
                          Command="{Binding MoveFirst, Source={StaticResource navi}}">

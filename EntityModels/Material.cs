@@ -6,31 +6,86 @@ namespace LabBook_WPF_EF.EntityModels
 {
     public partial class Material : INotifyPropertyChanged
     {
-       private long _functionId;
-       private long _currencyId;
-       private decimal? _price;
-
-       public Material()
+        private string _name;
+        private long _functionId;
+        private long _currencyId;
+        private long _unitId;
+        private decimal? _price;
+        private bool? _isActive;
+        private bool? _isProduction;
+        private bool? _isDanger;
+        private bool? _isObserved;
+        
+        public Material()
         {
             MaterialJoinGhsList = new HashSet<MaterialJoinGHS>();
             MaterialJoinHpList = new HashSet<MaterialJoinHP>();
         }
 
         public long Id { get; set; }
-        public string Name { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                Modified = true;
+                OnPropertyChanged(nameof(Name));
+            }
+
+        }
         public bool? IsIntermadiate { get; set; }
-        public bool? IsDanger { get; set; }
-        public bool? IsProduction { get; set; }
-        public bool? IsObserved { get; set; }
-        public bool? IsActive { get; set; }
+        public bool? IsDanger
+        {
+            get => _isDanger;
+            set
+            {
+                _isDanger = value;
+                Modified = true;
+                OnPropertyChanged(nameof(IsDanger));
+            }
+        }
+        public bool? IsProduction
+        {
+            get => _isProduction;
+            set
+            {
+                _isProduction = value;
+                Modified = true;
+                OnPropertyChanged(nameof(IsProduction));
+            }
+        }
+        public bool? IsObserved
+        {
+            get => _isObserved;
+            set
+            {
+                _isObserved = value;
+                Modified = true;
+                OnPropertyChanged(nameof(IsObserved));
+            }
+
+        }
+        public bool? IsActive
+        {
+            get => _isActive;
+            set
+            {
+                _isActive = value;
+                Modified = true;
+                OnPropertyChanged(nameof(IsActive));
+            }
+        }
         public long IntermediateNrD { get; set; } = -1;
         public long ClpSignalWordId { get; set; }
         public long ClpMsdsId { get; set; }
         public long FunctionId 
-        { get => _functionId;
+        { 
+            get => _functionId;
             set
             {
                 _functionId = value;
+                Modified = true;
                 OnPropertyChanged(nameof(FunctionId));
             }
         }
@@ -40,6 +95,7 @@ namespace LabBook_WPF_EF.EntityModels
             set
             {
                 _price = value;
+                Modified = true;
                 OnPropertyChanged(nameof(Price));
             }
         }
@@ -49,10 +105,20 @@ namespace LabBook_WPF_EF.EntityModels
             set
             {
                 _currencyId = value;
+                Modified = true;
                 OnPropertyChanged(nameof(CurrencyId));
             }
         }
-        public long UnitId { get; set; }
+        public long UnitId
+        {
+            get => _unitId;
+            set
+            {
+                _unitId = value;
+                Modified = true;
+                OnPropertyChanged(nameof(UnitId));
+            }
+        }
         public double? Density { get; set; }
         public double? Solids { get; set; }
         public double? Ash450 { get; set; }
@@ -70,6 +136,7 @@ namespace LabBook_WPF_EF.EntityModels
         public virtual ICollection<MaterialJoinGHS> MaterialJoinGhsList { get; set; }
         public virtual ICollection<MaterialJoinHP> MaterialJoinHpList { get; set; }
 
+        public bool Modified { get; set; } = false;
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(params string[] names)
         {

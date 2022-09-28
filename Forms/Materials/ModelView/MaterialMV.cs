@@ -4,12 +4,7 @@ using LabBook_WPF_EF.EntityModels;
 using LabBook_WPF_EF.Forms.Materials.Command;
 using LabBook_WPF_EF.Navigation;
 using LabBook_WPF_EF.Service;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -18,15 +13,19 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 {
     public class MaterialMV : INotifyPropertyChanged, INavigation
     {
-        private readonly string _formPath = @"\Data\Forms\MaterialForm.xml.xml";
+        private readonly string _formPath = @"\Data\Forms\MaterialForm.xml";
 
         private ICommand _saveButton;
         private ICommand _deleteButton;
         private ICommand _addNewButton;
         private ICommand _clpButton;
 
+        private double _colNameWidth = 100;
+        private double _colFunctionWidth = 100;
+        private double _colPriceWidth = 100;
+
         private NavigationMV _navigationMV;
-        private int _selectedIndex;
+        private int _selectedIndex = 0;
         private readonly WindowFunction _windowFunction;
         private readonly MaterialService _service;
         private readonly WindowParameter _windowParameter;
@@ -102,6 +101,36 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
         }
 
+        public double ColNameWidth
+        {
+            get => _colNameWidth;
+            set
+            {
+                _colNameWidth = value;
+                OnPropertyChanged(nameof(ColNameWidth));
+            }    
+        }
+
+        public double ColFunctionWidth
+        {
+            get => _colFunctionWidth;
+            set
+            {
+                _colFunctionWidth = value;
+                OnPropertyChanged(nameof(ColFunctionWidth));
+            }
+        }
+
+        public double ColPriceWidth
+        {
+            get => _colPriceWidth;
+            set
+            {
+                _colPriceWidth = value;
+                OnPropertyChanged(nameof(ColPriceWidth));
+            }
+        }
+
         public bool Modified => false; // _materialService.Modified;
 
         public bool IsDanger => true;
@@ -116,12 +145,15 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
             if (Modified)
             {
-                answer = MessageBox.Show("Dokonano zmian w rekordach. Czy zapisać zmiany?", "Zamis zmian", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                answer = MessageBox.Show("Dokonano zmian w rekordach. Czy zapisać zmiany?", "Zampis zmian", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
             }
 
             if (answer == MessageBoxResult.Yes)
             {
                 Save();
+                _windowParameter.AddColumnWidth("Name", _colNameWidth);
+                _windowParameter.AddColumnWidth("Function", _colFunctionWidth);
+                _windowParameter.AddColumnWidth("Price", _colPriceWidth);
                 _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
             }
             else if (answer == MessageBoxResult.Cancel)
@@ -130,6 +162,9 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
             else
             {
+                _windowParameter.AddColumnWidth("Name", _colNameWidth);
+                _windowParameter.AddColumnWidth("Function", _colFunctionWidth);
+                _windowParameter.AddColumnWidth("Price", _colPriceWidth);
                 _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
             }
         }
@@ -161,7 +196,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
                 //    _service.RefreshQualityData(null);
                 //    IsTextBoxActive = false;
                 //}
-                //OnPropertyChanged(nameof(DgRowIndex),
+                OnPropertyChanged(nameof(DgRowIndex));
                 //    nameof(IsAnyQuality),
                 //    nameof(IsTextBoxActive),
                 //    nameof(GetActiveFields),

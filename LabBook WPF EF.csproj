@@ -263,6 +263,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commons\CombosVM.cs" />
+    <Compile Include="Commons\DataContextProxy.cs" />
     <Compile Include="Commons\IPosition.cs" />
     <Compile Include="Commons\SortableObservableCollection.cs" />
     <Compile Include="Commons\WindowFunction.cs" />
@@ -270,6 +271,7 @@
     <Compile Include="Converters\CurrencyToBoldConverter.cs" />
     <Compile Include="Converters\CurrencyToColorConverter.cs" />
     <Compile Include="Converters\DangerToRedColorConverter.cs" />
+    <Compile Include="Converters\DataGridLenghtToDoubleConverter.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
     <Compile Include="Converters\PriceNullToBoldConverter.cs" />
     <Compile Include="Converters\PriceSelectedToColorConverter.cs" />

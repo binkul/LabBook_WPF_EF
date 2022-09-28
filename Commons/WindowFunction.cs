@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace LabBook_WPF_EF.Commons
@@ -23,21 +24,48 @@ namespace LabBook_WPF_EF.Commons
 
             try
             {
-                XDocument xml = XDocument.Load(path);
+                XmlDocument xml = new XmlDocument();
+                xml.Load(path);
 
-                XElement position = xml.Root.Element("window").Element("position");
-                windowParameter.Left = double.Parse(position.Element("x").Value, CultureInfo.InvariantCulture);
-                windowParameter.Top = double.Parse(position.Element("y").Value, CultureInfo.InvariantCulture);
+                string x = xml.SelectSingleNode("//window/position/x").FirstChild.Value;
+                string y = xml.SelectSingleNode("//window/position/y").FirstChild.Value;
+                string width = xml.SelectSingleNode("//window/size/width").FirstChild.Value;
+                string height = xml.SelectSingleNode("//window/size/height").FirstChild.Value;
+                windowParameter.Left = double.Parse(x, CultureInfo.InvariantCulture);
+                windowParameter.Top = double.Parse(y, CultureInfo.InvariantCulture);
+                windowParameter.Width = double.Parse(width, CultureInfo.InvariantCulture);
+                windowParameter.Height = double.Parse(height, CultureInfo.InvariantCulture);
 
-                XElement size = xml.Root.Element("window").Element("size");
-                windowParameter.Width = double.Parse(size.Element("width").Value, CultureInfo.InvariantCulture);
-                windowParameter.Height = double.Parse(size.Element("height").Value, CultureInfo.InvariantCulture);
+                //XmlElement position = xml .Root.Element("window").Element("position");
+                //windowParameter.Left = double.Parse(position.Element("x").Value, CultureInfo.InvariantCulture);
+                //windowParameter.Top = double.Parse(position.Element("y").Value, CultureInfo.InvariantCulture);
 
-                XElement datagrid = xml.Root.Element("window").Element("datagrid");
-                if (datagrid != null)
+                //XElement size = xml.Root.Element("window").Element("size");
+                //windowParameter.Width = double.Parse(size.Element("width").Value, CultureInfo.InvariantCulture);
+                //windowParameter.Height = double.Parse(size.Element("height").Value, CultureInfo.InvariantCulture);
+
+                //XElement datagrid = xml.Root.Element("window").Element("datagrid");
+
+                var items = xml.SelectNodes("//window/datagrid");
+                if (items != null)
                 {
-                    IEnumerable<IDictionary<string, string>> data = (IEnumerable<IDictionary<string, string>>)datagrid.Elements();
+                    foreach(XmlNode item in items)
+                    {
+                        string name = item.FirstChild.Name;
+                        string value = item.FirstChild.InnerText;
+                        windowParameter.AddColumnWidth(name, double.Parse(value));
+                    }
                 }
+                //var root = xml.docu
+                //foreach(var item in items)
+                //{
+                //    windowParameter.AddColumnWidth()
+                //}
+
+                //if (datagrid != null)
+                //{
+                //    IEnumerable<IDictionary<string, string>> data = (IEnumerable<IDictionary<string, string>>)datagrid.Elements();
+                //}
             }
             catch (Exception ex)
             {

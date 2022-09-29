@@ -1,7 +1,6 @@
 ﻿using LabBook_WPF_EF.EntityModels;
 using LabBook_WPF_EF.Forms.Materials.ModelView;
 using LabBook_WPF_EF.Navigation;
-using LabBook_WPF_EF.Service;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;

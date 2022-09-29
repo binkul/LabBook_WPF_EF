@@ -19,6 +19,8 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private readonly string _price = "Price";
         private readonly string _currency = "Currency";
         private readonly string _unit = "Unit";
+        private readonly string _date = "Date";
+        private readonly string _voc = "VOC";
 
         private ICommand _saveButton;
         private ICommand _deleteButton;
@@ -30,6 +32,8 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private double _colPriceWidth = 100;
         private double _colCurrencyWidth = 50;
         private double _colUnitWidth = 50;
+        private double _colDateWidth = 60;
+        private double _colVocWidth = 60;
 
         private NavigationMV _navigationMV;
         private int _selectedIndex = 0;
@@ -157,6 +161,26 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
             }
         }
 
+        public double ColDateWidth
+        {
+            get => _colDateWidth;
+            set
+            {
+                _colDateWidth = value;
+                OnPropertyChanged(nameof(ColDateWidth));
+            }
+        }
+
+        public double ColVocWidth
+        {
+            get => _colVocWidth;
+            set
+            {
+                _colVocWidth = value;
+                OnPropertyChanged(nameof(ColVocWidth));
+            }
+        }
+
         public bool Modified => false; // _materialService.Modified;
 
         public bool IsDanger => true;
@@ -176,6 +200,8 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
                 ColPriceWidth = _windowParameter.GetGridColummnWidth(_price);
                 ColCurrencyWidth = _windowParameter.GetGridColummnWidth(_currency);
                 ColUnitWidth = _windowParameter.GetGridColummnWidth(_unit);
+                ColDateWidth = _windowParameter.GetGridColummnWidth(_date);
+                ColVocWidth = _windowParameter.GetGridColummnWidth(_voc);
             }
 
             OnPropertyChanged(
@@ -187,16 +213,20 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
                 nameof(ColFunctionWidth),
                 nameof(ColPriceWidth),
                 nameof(ColCurrencyWidth),
-                nameof(ColUnitWidth));
+                nameof(ColUnitWidth),
+                nameof(ColDateWidth),
+                nameof(ColVocWidth));
         }
 
         private void SaveWidnowsParameter()
         {
-            _windowParameter.AddColumnWidth(_name, _colNameWidth);
-            _windowParameter.AddColumnWidth(_function, _colFunctionWidth);
-            _windowParameter.AddColumnWidth(_price, _colPriceWidth);
-            _windowParameter.AddColumnWidth(_currency, _colCurrencyWidth);
-            _windowParameter.AddColumnWidth(_unit, _colUnitWidth);
+            _windowParameter.AddColumnWidth(_name, ColNameWidth);
+            _windowParameter.AddColumnWidth(_function, ColFunctionWidth);
+            _windowParameter.AddColumnWidth(_price, ColPriceWidth);
+            _windowParameter.AddColumnWidth(_currency, ColCurrencyWidth);
+            _windowParameter.AddColumnWidth(_unit, ColUnitWidth);
+            _windowParameter.AddColumnWidth(_date, ColDateWidth);
+            _windowParameter.AddColumnWidth(_voc, ColVocWidth);
             _ = _windowFunction.SaveWindowParameters(_windowParameter, _formPath);
         }
 
@@ -231,7 +261,7 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
 
         #region Navigation
 
-        public int GetRowCount => 0; // _service.GetQualityCount; //ok
+        public int GetRowCount => _service.GetmaterialsCount;
 
         public int DgRowIndex //ok
         {

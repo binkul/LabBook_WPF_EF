@@ -24,6 +24,8 @@ namespace LabBook_WPF_EF.Service
             PrepareData();
         }
 
+        public int GetmaterialsCount => Materials.Count;
+
         public SortableObservableCollection<Material> GetMaterials()
         {
             List<Material> tmpMaterial = _contex.Materials

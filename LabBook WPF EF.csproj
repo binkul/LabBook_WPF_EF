@@ -272,9 +272,12 @@
     <Compile Include="Converters\CurrencyToColorConverter.cs" />
     <Compile Include="Converters\DangerToRedColorConverter.cs" />
     <Compile Include="Converters\DataGridLenghtToDoubleConverter.cs" />
+    <Compile Include="Converters\DateTimeConverterOneWay.cs" />
     <Compile Include="Converters\NaviCurrentConverter.cs" />
+    <Compile Include="Converters\NaviTotalConverter.cs" />
     <Compile Include="Converters\PriceNullToBoldConverter.cs" />
     <Compile Include="Converters\PriceSelectedToColorConverter.cs" />
+    <Compile Include="Converters\VocSelectedToColorConverter.cs" />
     <Compile Include="EntityModels\ClpGHS.cs" />
     <Compile Include="EntityModels\ClpPhraseHP.cs" />
     <Compile Include="EntityModels\ClpSignalWord.cs" />

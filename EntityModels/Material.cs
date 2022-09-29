@@ -15,6 +15,8 @@ namespace LabBook_WPF_EF.EntityModels
         private bool? _isProduction;
         private bool? _isDanger;
         private bool? _isObserved;
+        private decimal? _voc;
+        private DateTime _dateUpdated;
         
         public Material()
         {
@@ -30,6 +32,7 @@ namespace LabBook_WPF_EF.EntityModels
             {
                 _name = value;
                 Modified = true;
+                DateUpdate = DateTime.Today;
                 OnPropertyChanged(nameof(Name));
             }
 
@@ -96,6 +99,7 @@ namespace LabBook_WPF_EF.EntityModels
             {
                 _price = value;
                 Modified = true;
+                DateUpdate = DateTime.Today;
                 OnPropertyChanged(nameof(Price));
             }
         }
@@ -106,6 +110,7 @@ namespace LabBook_WPF_EF.EntityModels
             {
                 _currencyId = value;
                 Modified = true;
+                DateUpdate = DateTime.Today;
                 OnPropertyChanged(nameof(CurrencyId));
             }
         }
@@ -116,17 +121,35 @@ namespace LabBook_WPF_EF.EntityModels
             {
                 _unitId = value;
                 Modified = true;
+                DateUpdate = DateTime.Today;
                 OnPropertyChanged(nameof(UnitId));
             }
         }
         public double? Density { get; set; }
         public double? Solids { get; set; }
         public double? Ash450 { get; set; }
-        public decimal? VOC { get; set; }
+        public decimal? VOC
+        {
+            get => _voc;
+            set
+            {
+                _voc = value;
+                Modified = true;
+                OnPropertyChanged(nameof(VOC));
+            }
+        }
         public string Remarks { get; set; }
         public long LoginId { get; set; }
         public DateTime DateCreated { get; set; }
-        public DateTime DateUpdate { get; set; }
+        public DateTime DateUpdate
+        {
+            get => _dateUpdated;
+            set
+            {
+                _dateUpdated = value;
+                OnPropertyChanged(nameof(DateUpdate));
+            }
+        }
 
         public virtual ClpSignalWord ClpSignalWord { get; set; }
         public virtual MaterialFunction MaterialFunction { get; set; }

@@ -26,12 +26,15 @@
         <naviMV:NavigationMV x:Key="navi" />
         <commons:DataContextProxy x:Key="proxy" Data="{Binding}" />
         <converters:NaviCurrentConverter x:Key="NaviCurrentConverter" />
+        <converters:NaviTotalConverter x:Key="NaviTotalConverter" />
         <converters:DangerToRedColorConverter x:Key="DangerToRedConverter" />
         <converters:PriceNullToBoldConverter x:Key="PriceToBoldConverter" />
         <converters:PriceSelectedToColorConverter x:Key="PriceTocColorConverter" />
+        <converters:VocSelectedToColorConverter x:Key="VocTocColorConverter" />
         <converters:CurrencyToColorConverter x:Key="CurrncyToColorConverter" />
         <converters:CurrencyToBoldConverter x:Key="CurrencyToBoldConverter" />
         <converters:DataGridLenghtToDoubleConverter x:Key="DoubleToLenghtConverter" />
+        <converters:DateTimeConverterOneWay x:Key="DateTimeConverterOneWay" />
         <Style x:Key="AllignColmnHeaderCenter" TargetType="DataGridColumnHeader">
             <Setter Property="SeparatorBrush" Value="WhiteSmoke" />
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -90,6 +93,10 @@
         <Style x:Key="FrameArounCombo" TargetType="DataGridCell">
             <Setter Property="Margin" Value="0" />
             <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style x:Key="AllignCheckCellCenter" TargetType="CheckBox">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <SolidColorBrush x:Key="DataGridBorderColor" Color="#FFB1AEAE"/>
     </Window.Resources>
@@ -253,21 +260,24 @@
                                                     CanUserSort="False"
                                                     Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}"
                                                     Width="0.1*"
-                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" />
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" 
+                                                    ElementStyle="{StaticResource AllignCheckCellCenter}" />
 
                             <!-- column production -->
                             <DataGridCheckBoxColumn x:Name="ColProd" Header="Prod."
                                                     CanUserSort="False"
                                                     Binding="{Binding IsProduction, UpdateSourceTrigger=PropertyChanged}"
                                                     Width="0.1*"
-                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" />
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenter}" 
+                                                    ElementStyle="{StaticResource AllignCheckCellCenter}" />
 
                             <!-- column danger -->
                             <DataGridCheckBoxColumn x:Name="ColDanger" Header="Nieb."
                                                     CanUserSort="False"
                                                     Binding="{Binding IsDanger, UpdateSourceTrigger=PropertyChanged}"
                                                     Width="0.1*"
-                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenterWithRed}" />
+                                                    HeaderStyle="{StaticResource AllignColmnHeaderCenterWithRed}"
+                                                    ElementStyle="{StaticResource AllignCheckCellCenter}" />
 
                             <!-- column material function -->
                             <DataGridTemplateColumn CanUserSort="False" Header="Funkcja"
@@ -370,6 +380,44 @@
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
 
+                            <!-- column Voc -->
+                            <DataGridTextColumn x:Name="ColVoc" Header="VOC" IsReadOnly="False" CanUserSort="False"
+                                                Width="{Binding Data.ColVocWidth, Source={StaticResource proxy}, Converter={StaticResource DoubleToLenghtConverter}, Mode=TwoWay}"
+                                                HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                                EditingElementStyle="{StaticResource DoubleErrorStyle}"
+                                                ElementStyle="{StaticResource AllignCellRight}" >
+                                <DataGridTextColumn.Binding>
+                                    <Binding Path="VOC" UpdateSourceTrigger="LostFocus" Mode="TwoWay" StringFormat="G" ConverterCulture="pl-PL"
+                                             ValidatesOnDataErrors="True" >
+                                        <Binding.ValidationRules>
+                                            <val:DoubleCellValidation />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.CellStyle>
+                                    <Style TargetType="{x:Type DataGridCell}">
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Style.Triggers>
+                                            <Trigger Property="DataGridCell.IsSelected" Value="False">
+                                                <Setter Property="Background" Value="{Binding VOC, Converter={StaticResource VocTocColorConverter}}" />
+                                            </Trigger>
+                                            <Trigger Property="DataGridCell.IsEditing" Value="True" >
+                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGridTextColumn.CellStyle>
+                            </DataGridTextColumn>
+
+                            <!-- update date -->
+                            <DataGridTextColumn x:Name="ColDate" Header="Data zmian" IsReadOnly="True" CanUserSort="False"
+                                                Width="{Binding Data.ColDateWidth, Source={StaticResource proxy}, Converter={StaticResource DoubleToLenghtConverter}, Mode=TwoWay}"
+                                                HeaderStyle="{StaticResource AllignColmnHeaderCenter}"
+                                                ElementStyle="{StaticResource AllignCellCenter}"
+                                                Binding="{Binding DateUpdate, Converter={StaticResource DateTimeConverterOneWay}, Mode=OneWay}">
+                            </DataGridTextColumn>
+
                         </DataGrid.Columns>
                         
                     </DataGrid>
@@ -411,6 +459,10 @@
                      FontWeight="SemiBold" IsReadOnly="True" Margin="1,0,0,0" 
                          Text="{Binding DgRowIndex, Source={StaticResource navi}, Mode=OneWay, Converter={StaticResource NaviCurrentConverter}}"/>
 
+                <Label x:Name="LblNavieRec" Height="20" Width="49" HorizontalAlignment="Left" FontSize="11" FontWeight="SemiBold" 
+                   Padding="0,3,0,0" Margin="1,0,0,0"
+                       Content="{Binding GetRowCount, Source={StaticResource navi}, Mode=OneWay, Converter={StaticResource NaviTotalConverter}}"/>
+
                 <Button x:Name="BtnNaviRight" HorizontalAlignment="Left" Height="20" Width="20" Tag="right" Margin="1,0,0,0"
                         Command="{Binding MoveRight, Source={StaticResource navi}}">
                     <StackPanel Orientation="Horizontal" >
@@ -426,6 +478,7 @@
                 </Button>
 
             </StackPanel>
+        
         </Grid>
 
         

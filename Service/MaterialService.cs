@@ -11,20 +11,24 @@ namespace LabBook_WPF_EF.Service
 {
     internal class MaterialService
     {
-        private readonly User _user;
-        private readonly LabBookContext _contex;
+        private User _user;
+        private readonly LabBookContext _contex = new LabBookContext();
         public SortableObservableCollection<Material> FullMaterials { get; private set; }
         public SortableObservableCollection<Material> Materials { get; private set; }
         public SortableObservableCollection<MaterialFunction> MaterialFunctions { get; private set; }
 
-        public MaterialService(User user, LabBookContext labBookContext)
+        public MaterialService()
         {
-            _user = user;
-            _contex = labBookContext;
             PrepareData();
         }
 
         public int GetmaterialsCount => Materials.Count;
+
+        internal void AttachUser(User user)
+        {
+            _user = user;
+            _ = _contex.Users.Attach(_user);
+        }
 
         public SortableObservableCollection<Material> GetMaterials()
         {

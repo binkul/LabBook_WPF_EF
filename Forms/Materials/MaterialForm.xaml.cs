@@ -14,16 +14,18 @@ namespace LabBook_WPF_EF.Forms.Materials
     /// </summary>
     public partial class MaterialForm : RibbonWindow
     {
-        public MaterialForm(LabBookContext context, User user)
+        public MaterialForm(User user)
         {
             InitializeComponent();
 
-            MaterialMV materialMV = new MaterialMV(context, user);
-            DataContext = materialMV;
+            MaterialMV view = (MaterialMV)DataContext;
             NavigationMV navigationMV = Resources["navi"] as NavigationMV;
 
-            navigationMV.ModelView = materialMV;
-            materialMV.SetNavigationMV = navigationMV;
+            navigationMV.ModelView = view;
+            view.SetNavigationMV = navigationMV;
+            view.SetUser = user;
+
+            TxtName.Focus();
         }
 
         private void TxtBox_KeyUp(object sender, KeyEventArgs e)

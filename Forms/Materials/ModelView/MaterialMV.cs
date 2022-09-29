@@ -36,24 +36,25 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         private double _colVocWidth = 60;
 
         private NavigationMV _navigationMV;
-        private int _selectedIndex = 0;
+        private int _selectedIndex;
+        private User _user;
         private readonly WindowFunction _windowFunction;
         private readonly MaterialService _service;
         private WindowParameter _windowParameter;
+        public Material ActualMaterial { get; set; }
         public RelayCommand<CancelEventArgs> OnClosingCommand { get; set; }
         public RelayCommand<SelectionChangedEventArgs> OnComboSelectionIndexChanged { get; set; }
 
 
-        public MaterialMV(LabBookContext context, User user)
+        public MaterialMV()
         {
             _windowFunction = new WindowFunction();
-            _service = new MaterialService(user, context);
+            _service = new MaterialService();
             OnClosingCommand = new RelayCommand<CancelEventArgs>(OnClosingCommandExecuted);
             OnComboSelectionIndexChanged = new RelayCommand<SelectionChangedEventArgs>(OnComboSelectionIndexChangedExecuted);
 
             SetWindowsParameter();
         }
-
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(params string[] names)
@@ -68,6 +69,15 @@ namespace LabBook_WPF_EF.Forms.Materials.ModelView
         internal NavigationMV SetNavigationMV
         {
             set => _navigationMV = value;
+        }
+
+        internal User SetUser
+        {
+            set
+            {
+                _user = value;
+                _service.AttachUser(_user);
+            }
         }
 
         public double FormLeft

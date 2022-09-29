@@ -52,7 +52,7 @@ namespace LabBook_WPF_EF.Forms.Login
             {
                 user.Password = "";
                 Mouse.OverrideCursor = Cursors.Wait;
-                MaterialForm quality = new MaterialForm(contex, user);
+                MaterialForm quality = new MaterialForm(user); // contex, user);
                 quality.Show();
                 Close();
                 Mouse.OverrideCursor = null;
